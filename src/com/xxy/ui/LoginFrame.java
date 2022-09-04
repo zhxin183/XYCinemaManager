@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import af.swing.LayoutBox;
 import af.swing.layout.HLayout;
 import af.swing.layout.VLayout;
+import com.xxy.util.UiUtil;
 
 import static com.xxy.constants.Constants.UI_ROOT_PADDING;
 
@@ -42,7 +43,7 @@ public class LoginFrame extends JFrame
 		LayoutBox root = new LayoutBox().layout(new BorderLayout());
 		this.setContentPane(root);
 
-		root.add(initTop(), BorderLayout.NORTH);
+		root.add( initTop(), BorderLayout.NORTH);
 		root.add( initCenter(), BorderLayout.CENTER);
 		root.add( initBottom(), BorderLayout.SOUTH);
 	}
@@ -73,8 +74,8 @@ public class LoginFrame extends JFrame
 		panel.padding(UI_ROOT_PADDING, UI_ROOT_PADDING, UI_ROOT_PADDING, UI_ROOT_PADDING);
 		panel.bgColor(new Color(0xFCFCFC));
 		
-		panel.add( initFormLine("用户名", idField) );
-		panel.add( initFormLine("密码", nameField) );
+		panel.add( UiUtil.initFormLine("用户名", idField) );
+		panel.add( UiUtil.initFormLine("密码", nameField) );
 		// panel.add( initFormLine("性别", sexField) );
 		// panel.add( initFormLine("手机", phoneField) );
 		
@@ -84,16 +85,5 @@ public class LoginFrame extends JFrame
 		// sexField.setSelectedIndex(1); // 默认选择'男'
 		
 		return panel;
-	}
-
-	// 中央，表单，一行
-	private JComponent initFormLine(String label, JComponent field)
-	{
-		LayoutBox box = new LayoutBox().layout(new HLayout());
-		box.preferredHeight(40).padding(5);
-		
-		box.add(new JLabel(label), "50px");
-		box.add(field, "1w");
-		return box;
 	}
 }

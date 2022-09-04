@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args)
     {
 //        JFrame frame = new LoginFrame("用户登陆"); // 300x200
-        JFrame frameAdminHome = new AdminHomeFrame();
+        JFrame frameAdminHome = new AdminCinemaFrame();
 //        MyFrame myFrame = new MyFrame("表格");
         frameAdminHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameAdminHome.setSize(800, 600);
