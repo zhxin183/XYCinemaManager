@@ -22,9 +22,9 @@ public class UiUtil {
      */
     public static JComponent initFormLine(String label, JComponent field)  {
         LayoutBox box = new LayoutBox().layout(new HLayout());
-        box.preferredHeight(32).padding(5);
+        box.preferredHeight(36).padding(5);
 
-        box.add(new JLabel(label), "50px");
+        box.add(new JLabel(label), "60px");
         box.add(field, "1w");
         return box;
     }

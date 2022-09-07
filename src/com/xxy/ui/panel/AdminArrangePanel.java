@@ -1,11 +1,15 @@
-package com.xxy.ui;
+package com.xxy.ui.panel;
 
 import af.swing.LayoutBox;
 import com.xxy.bean.Arrange;
+import com.xxy.ui.dialog.AdminArrangeDialog;
+import com.xxy.ui.view.ActionButtonView;
+import com.xxy.util.TestDataUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -13,6 +17,8 @@ public class AdminArrangePanel extends LayoutBox {
 
     private JTable tbArrange = new JTable();
     private DefaultTableModel tmArrange = new DefaultTableModel();
+
+    ActionButtonView actionPanel = new ActionButtonView();
 
     ArrayList<Arrange> listArrange = new ArrayList<>();
 
@@ -42,6 +48,9 @@ public class AdminArrangePanel extends LayoutBox {
         LayoutBox rightPanel = new LayoutBox().layout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(200, 0));
         add(rightPanel, BorderLayout.EAST);
+
+        actionPanel.setOnClickListener(onClickListener);
+        rightPanel.add(actionPanel, BorderLayout.SOUTH);
     }
 
 
@@ -50,9 +59,7 @@ public class AdminArrangePanel extends LayoutBox {
         listArrange.clear();
         tmArrange.setRowCount(0);
 
-        listArrange.add(new Arrange(1, 1, "惠州江北-中影国际影城", 1, "3D巨幕厅", 1, "猫和老鼠", 1662299098, 1662303657, 35.9f));
-        listArrange.add(new Arrange(2, 1, "惠州江北-中影国际影城", 2, "2号厅", 1, "猫和老鼠", 1662299098, 1662303657, 35.9f));
-        listArrange.add(new Arrange(3, 1, "惠州江北-中影国际影城", 3, "3号厅", 1, "猫和老鼠", 1662299098, 1662303657, 35.9f));
+        listArrange = TestDataUtil.getArrangeList();
 
         for (Arrange arrange : listArrange) {
             if (arrange.cinemaId == cinemaId) {
@@ -76,4 +83,25 @@ public class AdminArrangePanel extends LayoutBox {
         tmArrange.addRow(rowData); // 添加一行
     }
 
+    /**
+     * 操作Panel的按钮事件
+     */
+    private ActionButtonView.OnClickListener onClickListener = new ActionButtonView.OnClickListener() {
+        @Override
+        public void onButtonTap(ActionEvent event, int type) {
+            switch (type) {
+                case ActionButtonView.ActionType.ADD:
+                    System.out.println("添加排片 ===================");
+                    AdminArrangeDialog addDialog = new AdminArrangeDialog("添加排片", 0);
+                    addDialog.setVisible(true);
+                    break;
+                case ActionButtonView.ActionType.EDIT:
+                    System.out.println("编辑排片 ===================");
+                    break;
+                case ActionButtonView.ActionType.DELETE:
+                    System.out.println("删除排片 ===================");
+                    break;
+            }
+        }
+    };
 }

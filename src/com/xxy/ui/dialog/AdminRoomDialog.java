@@ -1,42 +1,54 @@
-package com.xxy.ui;
+package com.xxy.ui.dialog;
 
 import af.swing.LayoutBox;
 import af.swing.layout.VLayout;
 import com.xxy.bean.Cinema;
+import com.xxy.bean.Room;
 import com.xxy.constants.Constants;
 import com.xxy.util.SwingUtil;
+import com.xxy.util.TestDataUtil;
 import com.xxy.util.UiUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import static com.xxy.constants.Constants.UI_ROOT_PADDING;
 
 /**
- * 添加和编辑影院时，使用的弹窗
+ * 添加和编辑影院放映厅时，使用的弹窗
  */
-public class AdminCinemaDialog extends JDialog {
+public class AdminRoomDialog extends AdminBaseDialog {
 
     LayoutBox root;
 
+    JComboBox<Cinema> cbCinema = new JComboBox<>();
     JTextField tfName = new JTextField();
-    JTextArea taAddress = new JTextArea("", 3, 20);
-    JTextField tfTag = new JTextField();
-    JTextField tfScore = new JTextField();
+    JTextField tfSeat = new JTextField();
 
-    JButton btnCancel = new JButton("取消");
-    JButton btnSave = new JButton("保存");
+    private int cinemaId;
 
-    private Cinema cinema;
+    public AdminRoomDialog(String title, int cinemaId) {
+        super(new JFrame(), true, true);
+        this.cinemaId = cinemaId;
 
-    public AdminCinemaDialog(JFrame parent, boolean modal, String title, Cinema cinema) {
-        super(parent, modal);
+        initView(title);
+    }
 
-        this.cinema = cinema;
+    public AdminRoomDialog(String title, Room room) {
+        super(new JFrame(), true, false);
+        this.cinemaId = room.getCinemaId();
 
-        setSize(380, 480);
+        initView(title);
+
+        tfName.setText(room.getName());
+        tfSeat.setText(String.valueOf(room.getSeat()));
+    }
+
+    private void initView(String title) {
+        setSize(380, 230);
         setResizable(false);
         SwingUtil.centerInScreen(this);
 
@@ -48,9 +60,9 @@ public class AdminCinemaDialog extends JDialog {
         root.add(initCenter(), BorderLayout.CENTER);
         root.add(initBottom(), BorderLayout.SOUTH);
 
-        refreshData();
+        setCinemaComboBoxData(TestDataUtil.getCinemaList());
 
-        this.setVisible(true);
+        cbCinema.setEnabled(isNewAction);
     }
 
     private JComponent initCenter() {
@@ -58,11 +70,9 @@ public class AdminCinemaDialog extends JDialog {
         dataPanel.padding(UI_ROOT_PADDING, UI_ROOT_PADDING, UI_ROOT_PADDING, UI_ROOT_PADDING);
         dataPanel.bgColor(new Color(Constants.UI_COLOR_BG));
 
-        dataPanel.add( UiUtil.initFormImageLine("图片", 180,"res/1.jpg"));
+        dataPanel.add( UiUtil.initFormLine("电影院", cbCinema) );
         dataPanel.add( UiUtil.initFormLine("名称", tfName) );
-        dataPanel.add( UiUtil.initFormLine("标签", tfTag) );
-        dataPanel.add( UiUtil.initFormLine("评分", tfScore) );
-        dataPanel.add( UiUtil.initFormTextAreaLine("地址", taAddress) );
+        dataPanel.add( UiUtil.initFormLine("座位数", tfSeat) );
         return dataPanel;
     }
 
@@ -84,11 +94,25 @@ public class AdminCinemaDialog extends JDialog {
      * 刷新右边数据
      */
     public void refreshData() {
-        if (cinema != null) {
-            tfName.setText(cinema.getName());
-            taAddress.setText(cinema.getAddress());
-            tfTag.setText(cinema.getTag());
-            tfScore.setText(String.valueOf(cinema.getScore()));
+
+    }
+
+    /**
+     * 设置电影院下拉框数据
+     * @param listCinema 电影院数据
+     */
+    public void setCinemaComboBoxData(ArrayList<Cinema> listCinema) {
+        cbCinema.removeAllItems();
+        int selectIndex = -1;
+        for (int i = 0; i < listCinema.size(); i++) {
+            Cinema data = listCinema.get(i);
+            if (data.id == cinemaId) {
+                selectIndex = i;
+            }
+            cbCinema.addItem(data);
+        }
+        if (selectIndex != -1) {
+            cbCinema.setSelectedIndex(selectIndex);
         }
     }
 

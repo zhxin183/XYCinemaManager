@@ -1,29 +1,27 @@
-package com.xxy.ui;
+package com.xxy.ui.panel;
 
 import af.swing.LayoutBox;
 import af.swing.layout.VLayout;
 import com.xxy.bean.Cinema;
+import com.xxy.ui.view.ActionButtonView;
+import com.xxy.ui.dialog.AdminCinemaDialog;
 import com.xxy.util.UiUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static com.xxy.constants.Constants.UI_COLOR_BG;
 import static com.xxy.constants.Constants.UI_ROOT_PADDING;
 
-public class AdminCinemaPanel extends LayoutBox implements ActionListener {
+public class AdminCinemaPanel extends LayoutBox {
 
     JTextField tfName = new JTextField();
     JTextArea taAddress = new JTextArea("", 3, 20);
     JTextField tfTag = new JTextField();
     JTextField tfScore = new JTextField();
 
-    JButton btnAdd = new JButton("添加");
-    JButton btnEdit = new JButton("编辑");
-    JButton btnDelete = new JButton("删除");
-    JButton btnRoom = new JButton("放映室");
+    ActionButtonView actionPanel = new ActionButtonView();
 
     private Cinema cinema;
 
@@ -48,18 +46,8 @@ public class AdminCinemaPanel extends LayoutBox implements ActionListener {
         rightPanel.setPreferredSize(new Dimension(200, 0));
         add(rightPanel, BorderLayout.EAST);
 
-        VLayout vLayout = new VLayout();
-        LayoutBox boxButtons = new LayoutBox().layout(vLayout);
-        boxButtons.add(btnAdd);
-        boxButtons.add(btnEdit);
-        boxButtons.add(btnDelete);
-        boxButtons.padding(UI_ROOT_PADDING * 2);
-        boxButtons.setPreferredSize(new Dimension(200, 130));
-        rightPanel.add(boxButtons, BorderLayout.SOUTH);
-
-        btnAdd.addActionListener(this);
-        btnEdit.addActionListener(this);
-        btnDelete.addActionListener(this);
+        actionPanel.setOnClickListener(onClickListener);
+        rightPanel.add(actionPanel, BorderLayout.SOUTH);
     }
 
     /**
@@ -77,27 +65,27 @@ public class AdminCinemaPanel extends LayoutBox implements ActionListener {
 //        tabPanelArrange.refreshArrangeData(cinema.getId());
     }
 
-    /**
-     * 按钮事件监听
-     * @param e 事件
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnAdd) {
-            System.out.println("添加 ===================");
-            new AdminCinemaDialog(new JFrame(), true, "添加影院", null);
-        } else if (e.getSource() == btnEdit) {
-            System.out.println("编辑 ===================");
-            if (cinema == null) {
-                JOptionPane.showMessageDialog(new JFrame(), "请在左边列表选择需要编辑的影院。");
-                return;
-            } else {
-                new AdminCinemaDialog(new JFrame(), true, "编辑影院", cinema);
+    private ActionButtonView.OnClickListener onClickListener = new ActionButtonView.OnClickListener() {
+        @Override
+        public void onButtonTap(ActionEvent event, int type) {
+            switch (type) {
+                case ActionButtonView.ActionType.ADD:
+                    System.out.println("添加 ===================");
+                    new AdminCinemaDialog(true,"添加影院", null);
+                    break;
+                case ActionButtonView.ActionType.EDIT:
+                    System.out.println("编辑 ===================");
+                    if (cinema == null) {
+                        JOptionPane.showMessageDialog(new JFrame(), "请在左边列表选择需要编辑的影院。");
+                        return;
+                    } else {
+                        new AdminCinemaDialog(false,"编辑影院", cinema);
+                    }
+                    break;
+                case ActionButtonView.ActionType.DELETE:
+                    System.out.println("删除 ===================");
+                    break;
             }
-        } else if (e.getSource() == btnDelete) {
-            System.out.println("删除 ===================");
-        } else if (e.getSource() == btnRoom) {
-            System.out.println("放映室 ===================");
         }
-    }
+    };
 }

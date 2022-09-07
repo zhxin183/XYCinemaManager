@@ -3,12 +3,19 @@ package com.xxy.ui;
 import af.swing.LayoutBox;
 import com.xxy.bean.Cinema;
 import com.xxy.constants.Constants;
+import com.xxy.manager.LoginManager;
+import com.xxy.ui.panel.AdminArrangePanel;
+import com.xxy.ui.panel.AdminCinemaPanel;
+import com.xxy.ui.panel.AdminHeaderPanel;
+import com.xxy.ui.panel.AdminRoomPanel;
+import com.xxy.util.TestDataUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -18,10 +25,10 @@ import static com.xxy.constants.Constants.UI_ROOT_PADDING;
  * 影院CURD
  */
 public class AdminCinemaFrame extends JFrame {
-    LayoutBox root;
 
-    JButton btnLoginOut = new JButton("退出登陆");
-    JLabel lbTitle = new JLabel("欢迎您，XX");
+    public static WeakReference<AdminCinemaFrame> weakSelf;
+
+    LayoutBox root;
 
     // 表格标题
     JLabel lbTableTitle = new JLabel("电影院管理");
@@ -33,12 +40,18 @@ public class AdminCinemaFrame extends JFrame {
     // Model
     DefaultTableModel tableModel = new DefaultTableModel();
 
+    AdminHeaderPanel adminHeaderPanel = new AdminHeaderPanel(AdminHeaderPanel.HeaderType.FILM);
+
     ArrayList<Cinema> listCinema = new ArrayList<>();
 
     /**
      * 初始化页面
      */
     public AdminCinemaFrame() {
+        super();
+
+        weakSelf = new WeakReference<>(this);
+
         this.setTitle("管理员首页");
 
         root = new LayoutBox().layout(new BorderLayout());
@@ -46,7 +59,6 @@ public class AdminCinemaFrame extends JFrame {
 
         root.add(initTop(), BorderLayout.NORTH);
         root.add(initCenter(), BorderLayout.CENTER);
-        // root.add(initBottom(), BorderLayout.SOUTH);
         root.add(initBottomTab(), BorderLayout.SOUTH);
 
         // 加载数据
@@ -58,14 +70,8 @@ public class AdminCinemaFrame extends JFrame {
      * @return JComponent
      */
     private JComponent initTop() {
-        Font font = new Font("宋体", Font.BOLD, 18);
-        lbTitle.setFont(font);
-
-        LayoutBox panel = new LayoutBox().layout(new BorderLayout());
-        panel.add(lbTitle, BorderLayout.WEST);
-        panel.add(btnLoginOut, BorderLayout.EAST);
-        panel.padding(UI_ROOT_PADDING, UI_ROOT_PADDING, 0, UI_ROOT_PADDING);
-        return panel;
+        adminHeaderPanel.setListener(headerActionListener);
+        return adminHeaderPanel;
     }
 
     /**
@@ -162,15 +168,7 @@ public class AdminCinemaFrame extends JFrame {
         listCinema.clear();
         tableModel.setRowCount(0);
 
-        listCinema.add(new Cinema(1, "惠州江北-中影国际影城", "广东省惠州市惠城区惠州大道佳兆业中心4楼", "退 改签", 9.3f, ""));
-        listCinema.add(new Cinema(2, "惠州江北-华贸国际影城", "广东省惠州市惠城区华贸中心", "退 改签", 9.1f, ""));
-        listCinema.add(new Cinema(3, "中影国际-中海店", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
-        listCinema.add(new Cinema(4, "惠州中海国际影城", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
-        listCinema.add(new Cinema(5, "惠州中海国际影城", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
-        listCinema.add(new Cinema(6, "惠州中海国际影城", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
-        listCinema.add(new Cinema(7, "惠州中海国际影城", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
-        listCinema.add(new Cinema(8, "惠州中海国际影城", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
-        listCinema.add(new Cinema(9, "惠州中海国际影城", "广东省惠州市惠城区中海生活汇", "退 改签", 9.5f, ""));
+        listCinema = TestDataUtil.getCinemaList();
 
         for (Cinema cinema : listCinema) {
             addRow(cinema);
@@ -200,6 +198,8 @@ public class AdminCinemaFrame extends JFrame {
             if (e.getSource() == tbCinema) {
                 Cinema cinema = getCinemaBySelectedRow(tbCinema.getSelectedRow());
                 tabPanelCinema.refreshData(cinema);
+                tabPanelRoom.refreshData(cinema.getId());
+                tabPanelArrange.refreshData(cinema.getId());
             }
         }
 
@@ -221,6 +221,25 @@ public class AdminCinemaFrame extends JFrame {
         @Override
         public void mouseExited(MouseEvent e) {
 
+        }
+    };
+
+    /**
+     * 顶部条的按钮事件监听
+     */
+    private AdminHeaderPanel.HeaderActionListener headerActionListener = new AdminHeaderPanel.HeaderActionListener() {
+        @Override
+        public void onHeaderButtonTapped(AdminHeaderPanel.HeaderType type) {
+            switch (type) {
+                case LOGIN_OUT:
+                    System.out.println("退出登陆 ======");
+                    LoginManager.loginOut(weakSelf.get());
+                    break;
+                case FILM:
+                    System.out.println("电影管理 ======");
+                    FrameHelper.showNewFrame(FrameHelper.FrameType.ADMIN_FILM, weakSelf.get());
+                    break;
+            }
         }
     };
 }

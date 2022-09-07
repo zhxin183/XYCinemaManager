@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="mysql.connector.java" level="project" />
     <orderEntry type="library" name="af-swing-1.0-build20210916" level="project" />
+    <orderEntry type="library" name="sqlite-jdbc-3.39.2.1" level="project" />
   </component>
 </module>
